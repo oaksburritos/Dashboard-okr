@@ -2,125 +2,366 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OKRs & KPIs · 1T26</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#0b1120;--card:#131c2e;--card2:#1a2540;--border:#1e2d47;
-    --accent:#4f6ef7;--cyan:#38bdf8;--green:#22c55e;--red:#f87171;
-    --muted:#4a5c7a;--text:#e2eaf8;--sub:#7b90b2;
+    --bg:#0b1120; --card:#131c2e; --card2:#1a2540; --border:#1e2d47;
+    --accent:#4f6ef7; --green:#22c55e; --red:#f87171;
+    --muted:#4a5c7a; --text:#e2eaf8; --sub:#7b90b2;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  body{background:var(--bg);font-family:'IBM Plex Sans',sans-serif;color:var(--text);min-height:100vh;padding-bottom:80px}
-  .topbar{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 16px 12px}
-  .topbar-badge{font-size:9px;font-weight:700;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;display:flex;align-items:center;gap:5px;margin-bottom:3px}
-  .topbar-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);flex-shrink:0}
-  .topbar h1{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.02em}
-  .topbar .sub{font-size:11px;color:var(--sub);margin-top:2px}
-  .tabs{display:flex;gap:6px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
-  .tab{flex-shrink:0;padding:8px 18px;border-radius:20px;border:1px solid var(--border);font-size:12px;font-weight:600;background:var(--card);color:var(--sub);cursor:pointer;font-family:inherit;transition:all .2s}
-  .tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
-  .page{display:none;padding:16px}
-  .page.active{display:block}
-  .sec-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);display:flex;align-items:center;gap:7px;margin-bottom:12px;margin-top:24px}
-  .sec-label:first-child{margin-top:0}
-  .sec-label::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px;flex-shrink:0}
-  .kpi-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin:0 -16px;padding:0 16px 4px}
-  .kpi-scroll::-webkit-scrollbar{display:none}
-  .kpi-card{flex-shrink:0;width:148px;border-radius:14px;padding:14px 14px 12px;border:1px solid transparent}
-  .kpi-card.ok{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.22)}
-  .kpi-card.nok{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.22)}
-  .kpi-card.nd{background:var(--card);border-color:var(--border)}
-  .kpi-label{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sub);margin-bottom:7px;line-height:1.4}
-  .kpi-value{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--text);margin-bottom:4px}
-  .kpi-meta{font-size:10px;color:var(--muted);margin-bottom:5px}
-  .kpi-delta{font-size:11px;font-weight:700}
-  .kpi-delta.ok{color:var(--green)}
-  .kpi-delta.nok{color:var(--red)}
-  .kpi-bar{height:2px;border-radius:2px;margin-top:8px}
-  .kpi-bar.ok{background:var(--green)}
-  .kpi-bar.nok{background:var(--red)}
-  .kpi-bar.nd{background:var(--muted)}
-  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 14px;margin-bottom:12px}
-  .chart-card-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin-bottom:14px}
-  .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
-  .leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--sub)}
-  .leg-dot{width:8px;height:8px;border-radius:2px}
-  .yoy-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-  .yoy-badge{background:var(--card2);border-radius:10px;padding:10px 14px}
-  .yoy-badge-lbl{font-size:10px;color:var(--sub);margin-bottom:2px}
-  .yoy-badge-val{font-family:'DM Mono',monospace;font-size:15px;font-weight:700;color:var(--green)}
-  footer{position:fixed;bottom:0;left:0;right:0;background:rgba(11,17,32,.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--muted)}
+  body{background:var(--bg);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--text);min-height:100vh}
+
+  /* topbar */
+  .topbar{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);display:inline-block;margin-right:6px}
+  .badge{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center}
+  h1{font-size:clamp(18px,3vw,26px);font-weight:800;letter-spacing:-.02em}
+  .sub{font-size:12px;color:var(--sub);margin-top:3px}
+  .tabs{display:flex;gap:6px}
+  .tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);font-size:13px;font-weight:600;background:var(--card);color:var(--sub);cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+  .tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  /* layout */
+  .wrap{padding:20px 24px 60px;max-width:1200px;margin:0 auto}
+  .slbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sub);display:flex;align-items:center;gap:8px;margin:24px 0 12px}
+  .slbl:first-child{margin-top:0}
+  .slbl::before{content:'';width:3px;height:16px;background:var(--accent);border-radius:2px;flex-shrink:0}
+
+  /* kpi grid */
+  .kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+  .kcard{border-radius:14px;padding:16px 18px 14px;border:1px solid transparent}
+  .kcard.ok{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.22)}
+  .kcard.nok{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.22)}
+  .klbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--sub);margin-bottom:7px;line-height:1.4}
+  .kval{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:4px}
+  .kmeta{font-size:11px;color:var(--muted);margin-bottom:5px}
+  .kdelta{font-size:12px;font-weight:700}
+  .kdelta.ok{color:var(--green)} .kdelta.nok{color:var(--red)}
+  .kbar{height:2px;border-radius:2px;margin-top:10px}
+  .kbar.ok{background:var(--green)} .kbar.nok{background:var(--red)}
+
+  /* chart cards */
+  .cc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px}
+  .ctitle{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin-bottom:14px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  canvas{display:block;width:100%!important}
+
+  /* legend */
+  .leg{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}
+  .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sub)}
+  .ld{width:9px;height:9px;border-radius:2px}
+
+  /* yoy */
+  .yrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+  .ybadge{background:var(--card2);border-radius:10px;padding:12px 16px}
+  .ylbl{font-size:11px;color:var(--sub);margin-bottom:3px}
+  .yval{font-size:16px;font-weight:700;color:var(--green)}
+
+  /* footer */
+  footer{border-top:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:11px;color:var(--muted);max-width:1200px;margin:0 auto}
   .fl{display:flex;align-items:center;gap:4px}
-  .fl::before{content:'●';font-size:10px}
-  .fl.ok{color:var(--green)}
-  .fl.nok{color:var(--red)}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-  .chart-card,.kpi-scroll{animation:fadeUp .35s ease both}
+  .fl::before{content:'●'}
+  .fl.ok{color:var(--green)} .fl.nok{color:var(--red)}
+
+  .page{display:none} .page.on{display:block}
+
+  @media(max-width:640px){
+    .topbar{padding:12px 14px}
+    .wrap{padding:14px 14px 70px}
+    .kgrid{display:flex;overflow-x:auto;gap:10px;scrollbar-width:none;margin:0 -14px;padding:0 14px 4px;grid-template-columns:unset}
+    .kgrid::-webkit-scrollbar{display:none}
+    .kcard{flex-shrink:0;width:148px}
+    .g2{grid-template-columns:1fr}
+    .tabs{overflow-x:auto;scrollbar-width:none}
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{flex-shrink:0}
+  }
 </style>
 </head>
 <body>
+
 <div class="topbar">
-  <div class="topbar-badge">Painel de Controle</div>
-  <h1>OKRs &amp; KPIs</h1>
-  <div class="sub">1º Trimestre 2026 · março</div>
-</div>
-<div class="tabs">
-  <button class="tab active" onclick="setTab('tri',this)">1º Trimestre</button>
-  <button class="tab" onclick="setTab('hist',this)">Histórico</button>
-</div>
-<div id="page-tri" class="page active">
-  <div class="sec-label">Resumo do trimestre</div>
-  <div class="kpi-scroll">
-    <div class="kpi-card nok"><div class="kpi-label">Faturamento Acum.</div><div class="kpi-value">R$ 2,66M</div><div class="kpi-meta">Meta: R$ 4,80M</div><div class="kpi-delta nok">▼ 44,5% vs meta</div><div class="kpi-bar nok"></div></div>
-    <div class="kpi-card nok"><div class="kpi-label">Same Stores Jan YoY</div><div class="kpi-value">12,97%</div><div class="kpi-meta">Meta: 20%</div><div class="kpi-delta nok">▼ 7,0pp abaixo</div><div class="kpi-bar nok"></div></div>
-    <div class="kpi-card ok"><div class="kpi-label">Same Stores Fev YoY</div><div class="kpi-value">24,54%</div><div class="kpi-meta">Meta: 20%</div><div class="kpi-delta ok">▲ 4,5pp acima</div><div class="kpi-bar ok"></div></div>
-    <div class="kpi-card nok"><div class="kpi-label">EBITDA 1ºTri Bom Fim</div><div class="kpi-value">R$ 84,1k</div><div class="kpi-meta">Meta: R$ 130k</div><div class="kpi-delta nok">▼ 35,3% vs meta</div><div class="kpi-bar nok"></div></div>
-    <div class="kpi-card nok"><div class="kpi-label">EBITDA Park Canoas</div><div class="kpi-value">R$ 7,6k</div><div class="kpi-meta">Meta: R$ 30k</div><div class="kpi-delta nok">▼ 74,6% vs meta</div><div class="kpi-bar nok"></div></div>
-    <div class="kpi-card ok"><div class="kpi-label">Saldo Caixa Fev</div><div class="kpi-value">R$ 189,7k</div><div class="kpi-meta">Meta: R$ 150k</div><div class="kpi-delta ok">▲ 26,5% vs meta</div><div class="kpi-bar ok"></div></div>
+  <div>
+    <div class="badge"><span class="dot"></span>Painel de Controle</div>
+    <h1>OKRs &amp; KPIs</h1>
+    <div class="sub">1º Trimestre 2026 · Atualizado em março</div>
   </div>
-  <div class="sec-label" style="margin-top:20px">Faturamento Rede</div>
-  <div class="chart-card"><div class="chart-card-title">Meta: R$ 4,8M · YoY &gt; 20%</div><canvas id="cFat" height="160"></canvas><div class="legend"><div class="leg"><div class="leg-dot" style="background:#1e3a5f"></div>Meta</div><div class="leg"><div class="leg-dot" style="background:#22c55e"></div>Acima</div><div class="leg"><div class="leg-dot" style="background:#f87171"></div>Abaixo</div></div></div>
-  <div class="sec-label">Same Stores YoY</div>
-  <div class="chart-card"><div class="chart-card-title">Meta: 20%</div><canvas id="cSS" height="140"></canvas></div>
-  <div class="sec-label">Caixa Operacional</div>
-  <div class="chart-card"><canvas id="cCaixaOp" height="140"></canvas></div>
-  <div class="sec-label">Saldo de Caixa</div>
-  <div class="chart-card"><canvas id="cSaldo" height="140"></canvas></div>
-  <div class="sec-label">EBITDA Bom Fim</div>
-  <div class="chart-card"><canvas id="cEBF" height="140"></canvas></div>
-  <div class="sec-label">EBITDA Park Canoas</div>
-  <div class="chart-card"><canvas id="cEPC" height="140"></canvas></div>
+  <div class="tabs">
+    <button class="tab on" onclick="setTab('tri',this)">1º Trimestre</button>
+    <button class="tab"    onclick="setTab('his',this)">Histórico</button>
+  </div>
 </div>
-<div id="page-hist" class="page">
-  <div class="sec-label">Faturamento 2025 vs 2026</div>
-  <div class="chart-card"><canvas id="cHist" height="180"></canvas><div class="yoy-row"><div class="yoy-badge"><div class="yoy-badge-lbl">Jan 2026 YoY</div><div class="yoy-badge-val">▲ 42,8%</div></div><div class="yoy-badge"><div class="yoy-badge-lbl">Fev 2026 YoY</div><div class="yoy-badge-val">▲ 40,3%</div></div></div></div>
+
+<!-- TRIMESTRE -->
+<div id="page-tri" class="page on">
+<div class="wrap">
+  <div class="slbl">Resumo do Trimestre</div>
+  <div class="kgrid">
+    <div class="kcard nok"><div class="klbl">Faturamento Acumulado</div><div class="kval">R$ 2,66M</div><div class="kmeta">Meta: R$ 4,80M</div><div class="kdelta nok">▼ 44,5% vs meta</div><div class="kbar nok"></div></div>
+    <div class="kcard nok"><div class="klbl">Same Stores Jan YoY</div><div class="kval">12,97%</div><div class="kmeta">Meta: 20%</div><div class="kdelta nok">▼ 7,0pp abaixo</div><div class="kbar nok"></div></div>
+    <div class="kcard ok"><div class="klbl">Same Stores Fev YoY</div><div class="kval">24,54%</div><div class="kmeta">Meta: 20%</div><div class="kdelta ok">▲ 4,5pp acima</div><div class="kbar ok"></div></div>
+    <div class="kcard nok"><div class="klbl">EBITDA 1ºTri Bom Fim</div><div class="kval">R$ 84,1k</div><div class="kmeta">Meta: R$ 130k</div><div class="kdelta nok">▼ 35,3% vs meta</div><div class="kbar nok"></div></div>
+    <div class="kcard nok"><div class="klbl">EBITDA Park Canoas</div><div class="kval">R$ 7,6k</div><div class="kmeta">Meta: R$ 30k</div><div class="kdelta nok">▼ 74,6% vs meta</div><div class="kbar nok"></div></div>
+    <div class="kcard ok"><div class="klbl">Saldo de Caixa Fev</div><div class="kval">R$ 189,7k</div><div class="kmeta">Meta: R$ 150k</div><div class="kdelta ok">▲ 26,5% vs meta</div><div class="kbar ok"></div></div>
+  </div>
+
+  <div class="slbl">Faturamento Rede — Meta R$ 4,8M (YoY &gt; 20%)</div>
+  <div class="cc">
+    <canvas id="c1"></canvas>
+    <div class="leg">
+      <div class="li"><div class="ld" style="background:#1e3a5f"></div>Meta</div>
+      <div class="li"><div class="ld" style="background:#22c55e"></div>Acima da meta</div>
+      <div class="li"><div class="ld" style="background:#f87171"></div>Abaixo da meta</div>
+    </div>
+  </div>
+
+  <div class="slbl">Same Stores YoY — Meta 20%</div>
+  <div class="cc"><canvas id="c2"></canvas></div>
+
+  <div class="slbl">Caixa — Operacional &amp; Saldo</div>
+  <div class="g2">
+    <div class="cc"><div class="ctitle">Caixa Operacional</div><canvas id="c3"></canvas></div>
+    <div class="cc"><div class="ctitle">Saldo de Caixa</div><canvas id="c4"></canvas></div>
+  </div>
+
+  <div class="slbl">EBITDA — Bom Fim &amp; Park Canoas</div>
+  <div class="g2">
+    <div class="cc"><div class="ctitle">EBITDA Bom Fim</div><canvas id="c5"></canvas></div>
+    <div class="cc"><div class="ctitle">EBITDA Park Canoas</div><canvas id="c6"></canvas></div>
+  </div>
 </div>
+</div>
+
+<!-- HISTÓRICO -->
+<div id="page-his" class="page">
+<div class="wrap">
+  <div class="slbl">Histórico de Faturamento 2025 vs 2026</div>
+  <div class="cc">
+    <canvas id="c7"></canvas>
+    <div class="yrow">
+      <div class="ybadge"><div class="ylbl">Janeiro 2026 YoY</div><div class="yval">▲ 42,8%</div></div>
+      <div class="ybadge"><div class="ylbl">Fevereiro 2026 YoY</div><div class="yval">▲ 40,3%</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
 <footer>
-  <span>Indicadores_OKRs.xlsx</span>
-  <div style="display:flex;gap:12px"><span class="fl ok">Meta atingida</span><span class="fl nok">Abaixo</span></div>
+  <span>Fonte: Indicadores_OKRs.xlsx · 1T26</span>
+  <div style="display:flex;gap:14px">
+    <span class="fl ok">Meta atingida</span>
+    <span class="fl nok">Abaixo da meta</span>
+  </div>
 </footer>
+
 <script>
-const G='#1a2540',MC='#1e3a5f',GR='#22c55e',RD='#f87171',BL='#4f6ef7',CY='#38bdf8',MU='#4a5c7a';
-Chart.defaults.color='#7b90b2';
-Chart.defaults.font.family="'IBM Plex Sans',sans-serif";
-Chart.defaults.font.size=11;
-const grid=()=>({color:G,drawBorder:false});
-const fmt=v=>v===null?'–':new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(v);
-const tip={callbacks:{label:c=>' '+c.dataset.label+': '+fmt(c.raw)}};
-const tipPct={callbacks:{label:c=>' '+c.dataset.label+': '+(c.raw!==null?c.raw.toFixed(2)+'%':'–')}};
-const ax=(cb)=>({x:{grid:grid(),ticks:{color:MU}},y:{grid:grid(),ticks:{callback:cb,color:MU}}});
-new Chart('cFat',{type:'bar',data:{labels:['Jan','Fev','Mar'],datasets:[{label:'Meta',data:[1600000,1600000,1600000],backgroundColor:MC,borderRadius:4,barPercentage:.45},{label:'Realizado',data:[1392083,1269862,null],backgroundColor:[RD,RD,'transparent'],borderRadius:4,barPercentage:.45}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tip},scales:ax(v=>'R$'+(v/1e6).toFixed(1)+'M')}});
-new Chart('cSS',{type:'line',data:{labels:['Jan','Fev','Mar'],datasets:[{label:'Meta',data:[20,20,20],borderColor:BL,borderDash:[5,3],borderWidth:2,pointRadius:0},{label:'YoY%',data:[12.97,24.54,null],borderColor:CY,borderWidth:2.5,pointBackgroundColor:CY,pointRadius:5,tension:.3,spanGaps:false}]},options:{responsive:true,plugins:{tooltip:tipPct},scales:ax(v=>v+'%')}});
-new Chart('cCaixaOp',{type:'bar',data:{labels:['Jan','Fev','Mar'],datasets:[{label:'Meta',data:[70000,35000,95000],backgroundColor:MC,borderRadius:4,barPercentage:.45},{label:'Realizado',data:[55844,31467,null],backgroundColor:[RD,RD,'transparent'],borderRadius:4,barPercentage:.45}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tip},scales:ax(v=>'R$'+(v/1000).toFixed(0)+'k')}});
-new Chart('cSaldo',{type:'bar',data:{labels:['Jan','Fev','Mar'],datasets:[{label:'Meta',data:[150000,150000,150000],backgroundColor:MC,borderRadius:4,barPercentage:.45},{label:'Realizado',data:[252554,189675,null],backgroundColor:[GR,GR,'transparent'],borderRadius:4,barPercentage:.45}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tip},scales:ax(v=>'R$'+(v/1000).toFixed(0)+'k')}});
-new Chart('cEBF',{type:'bar',data:{labels:['Jan','Fev','Mar'],datasets:[{label:'Meta',data:[50000,20000,60000],backgroundColor:MC,borderRadius:4,barPercentage:.45},{label:'Realizado',data:[51861,32256,null],backgroundColor:[GR,GR,'transparent'],borderRadius:4,barPercentage:.45}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tip},scales:ax(v=>'R$'+(v/1000).toFixed(0)+'k')}});
-new Chart('cEPC',{type:'bar',data:{labels:['Jan','Fev','Mar'],datasets:[{label:'Meta',data:[10000,5000,15000],backgroundColor:MC,borderRadius:4,barPercentage:.45},{label:'Realizado',data:[10351,-2742,null],backgroundColor:[GR,RD,'transparent'],borderRadius:4,barPercentage:.45}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:tip},scales:ax(v=>'R$'+(v/1000).toFixed(0)+'k')}});
-new Chart('cHist',{type:'line',data:{labels:['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],datasets:[{label:'2025',data:[974652,905216,1036989,959991,1008119,930056,1084202,1257771,1108006,1293254,1346179,1400808],borderColor:MU,borderDash:[5,3],borderWidth:1.5,pointRadius:2,tension:.3},{label:'2026',data:[1392083,1269862,null,null,null,null,null,null,null,null,null,null],borderColor:BL,borderWidth:2.5,pointBackgroundColor:BL,pointRadius:5,tension:.3,spanGaps:false}]},options:{responsive:true,plugins:{tooltip:tip},scales:ax(v=>'R$'+(v/1e6).toFixed(1)+'M')}});
-function setTab(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');btn.classList.add('active')}
+// ── Mini chart engine (sem dependências externas) ──────────────────────────
+const C = {
+  BG:'#131c2e', GRID:'#1a2540', META:'#1e3a5f',
+  GR:'#22c55e', RD:'#f87171', BL:'#4f6ef7', CY:'#38bdf8', MU:'#4a5c7a',
+  TXT:'#7b90b2', TEXT:'#e2eaf8'
+};
+
+function fmt(v){ return v===null?null:new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(v); }
+function fmtK(v){ if(v===null)return null; return v>=1e6?'R$'+(v/1e6).toFixed(1)+'M':'R$'+(v/1000).toFixed(0)+'k'; }
+
+function setupCanvas(id, h){
+  const canvas = document.getElementById(id);
+  const dpr = window.devicePixelRatio||1;
+  const w = canvas.parentElement.clientWidth - 36;
+  canvas.width  = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width  = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return {ctx, w, h};
+}
+
+function drawBarChart(id, labels, datasets, yFmt, h=200){
+  const {ctx,w,h:H} = setupCanvas(id, h);
+  const PAD={t:16,r:12,b:32,l:52};
+  const PW=w-PAD.l-PAD.r, PH=H-PAD.t-PAD.b;
+
+  // flatten values to get range
+  const allVals = datasets.flatMap(d=>d.data).filter(v=>v!==null);
+  const minV = Math.min(0, ...allVals);
+  const maxV = Math.max(...allVals);
+  const range = maxV - minV || 1;
+  const pad = range * .12;
+  const lo = minV - (minV<0?pad:0), hi = maxV + pad;
+
+  // grid lines
+  ctx.strokeStyle = C.GRID; ctx.lineWidth = 1;
+  const steps = 5;
+  for(let i=0;i<=steps;i++){
+    const y = PAD.t + PH - (i/steps)*PH;
+    ctx.beginPath(); ctx.moveTo(PAD.l,y); ctx.lineTo(PAD.l+PW,y); ctx.stroke();
+    const val = lo + (i/steps)*(hi-lo);
+    ctx.fillStyle = C.TXT; ctx.font='10px system-ui'; ctx.textAlign='right';
+    ctx.fillText(yFmt(val), PAD.l-5, y+3.5);
+  }
+
+  // bars
+  const nGroups = labels.length;
+  const nDS = datasets.length;
+  const groupW = PW / nGroups;
+  const barW = Math.min(groupW*.35, 28);
+  const gap = barW*.15;
+  const totalBarW = nDS*barW + (nDS-1)*gap;
+
+  datasets.forEach((ds,di)=>{
+    ds.data.forEach((val,gi)=>{
+      if(val===null) return;
+      const x = PAD.l + gi*groupW + groupW/2 - totalBarW/2 + di*(barW+gap);
+      const zeroY = PAD.t + PH - ((0-lo)/(hi-lo))*PH;
+      const valY  = PAD.t + PH - ((val-lo)/(hi-lo))*PH;
+      const barH  = Math.abs(zeroY - valY);
+      const barTop = Math.min(zeroY, valY);
+      const color = typeof ds.colors==='function' ? ds.colors(val,gi) : ds.color;
+      ctx.fillStyle = color;
+      const r=3;
+      ctx.beginPath();
+      if(val>=0){ctx.moveTo(x+r,barTop);ctx.lineTo(x+barW-r,barTop);ctx.quadraticCurveTo(x+barW,barTop,x+barW,barTop+r);ctx.lineTo(x+barW,barTop+barH);ctx.lineTo(x,barTop+barH);ctx.lineTo(x,barTop+r);ctx.quadraticCurveTo(x,barTop,x+r,barTop);}
+      else{ctx.moveTo(x,barTop);ctx.lineTo(x+barW,barTop);ctx.lineTo(x+barW,barTop+barH-r);ctx.quadraticCurveTo(x+barW,barTop+barH,x+barW-r,barTop+barH);ctx.lineTo(x+r,barTop+barH);ctx.quadraticCurveTo(x,barTop+barH,x,barTop+barH-r);}
+      ctx.closePath(); ctx.fill();
+    });
+  });
+
+  // zero line
+  if(minV<0){
+    const zeroY = PAD.t + PH - ((0-lo)/(hi-lo))*PH;
+    ctx.strokeStyle='#334155'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(PAD.l,zeroY); ctx.lineTo(PAD.l+PW,zeroY); ctx.stroke();
+  }
+
+  // labels x
+  labels.forEach((lbl,i)=>{
+    const x = PAD.l + i*groupW + groupW/2;
+    ctx.fillStyle=C.TXT; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText(lbl, x, H-6);
+  });
+}
+
+function drawLineChart(id, labels, datasets, yFmt, refLine, h=180){
+  const {ctx,w,h:H} = setupCanvas(id, h);
+  const PAD={t:16,r:16,b:32,l:52};
+  const PW=w-PAD.l-PAD.r, PH=H-PAD.t-PAD.b;
+
+  const allVals = datasets.flatMap(d=>d.data).filter(v=>v!==null);
+  if(refLine!==undefined) allVals.push(refLine);
+  const minV=Math.min(...allVals), maxV=Math.max(...allVals);
+  const pad=(maxV-minV)*.15||1;
+  const lo=minV-pad, hi=maxV+pad;
+
+  // grid
+  ctx.strokeStyle=C.GRID; ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=PAD.t+PH-(i/4)*PH;
+    ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(PAD.l+PW,y);ctx.stroke();
+    ctx.fillStyle=C.TXT;ctx.font='10px system-ui';ctx.textAlign='right';
+    ctx.fillText(yFmt(lo+(i/4)*(hi-lo)),PAD.l-5,y+3.5);
+  }
+
+  // ref line
+  if(refLine!==undefined){
+    const y=PAD.t+PH-((refLine-lo)/(hi-lo))*PH;
+    ctx.strokeStyle=C.BL; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(PAD.l+PW,y);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=C.BL;ctx.font='10px system-ui';ctx.textAlign='left';
+    ctx.fillText('Meta '+yFmt(refLine),PAD.l+4,y-4);
+  }
+
+  // lines
+  const xOf = i => PAD.l + i*(PW/(labels.length-1));
+  const yOf = v => PAD.t + PH - ((v-lo)/(hi-lo))*PH;
+
+  datasets.forEach(ds=>{
+    ctx.strokeStyle=ds.color; ctx.lineWidth=ds.width||2.5; ctx.setLineDash(ds.dash||[]);
+    ctx.beginPath();
+    let started=false;
+    ds.data.forEach((v,i)=>{
+      if(v===null){started=false;return;}
+      if(!started){ctx.moveTo(xOf(i),yOf(v));started=true;}
+      else ctx.lineTo(xOf(i),yOf(v));
+    });
+    ctx.stroke(); ctx.setLineDash([]);
+    // dots
+    ds.data.forEach((v,i)=>{
+      if(v===null) return;
+      ctx.beginPath();ctx.arc(xOf(i),yOf(v),ds.dotR||4,0,Math.PI*2);
+      ctx.fillStyle=ds.color;ctx.fill();
+    });
+  });
+
+  // x labels
+  labels.forEach((lbl,i)=>{
+    ctx.fillStyle=C.TXT;ctx.font='11px system-ui';ctx.textAlign='center';
+    ctx.fillText(lbl,xOf(i),H-6);
+  });
+}
+
+// ── draw all charts ────────────────────────────────────────────────────────
+function drawAll(){
+  const mobile = window.innerWidth<=640;
+  const hBig = mobile?180:200, hMid=mobile?160:180, hSm=mobile?150:170;
+
+  // c1 faturamento
+  drawBarChart('c1',['Janeiro','Fevereiro','Março'],[
+    {data:[1600000,1600000,1600000],color:C.META},
+    {data:[1392083,1269862,null],colors:(v)=>v>=1600000?C.GR:C.RD}
+  ],fmtK,hBig);
+
+  // c2 same stores
+  drawLineChart('c2',['Janeiro','Fevereiro','Março'],[
+    {data:[12.97,24.54,null],color:C.CY,width:3,dotR:5}
+  ],v=>v.toFixed(0)+'%',20,hMid);
+
+  // c3 caixa op
+  drawBarChart('c3',['Jan','Fev','Mar'],[
+    {data:[70000,35000,95000],color:C.META},
+    {data:[55844,31467,null],colors:(v,i)=>[55844,31467][i]>=[70000,35000][i]?C.GR:C.RD}
+  ],fmtK,hSm);
+
+  // c4 saldo
+  drawBarChart('c4',['Jan','Fev','Mar'],[
+    {data:[150000,150000,150000],color:C.META},
+    {data:[252554,189675,null],colors:(v,i)=>[252554,189675][i]>=[150000,150000][i]?C.GR:C.RD}
+  ],fmtK,hSm);
+
+  // c5 ebitda BF
+  drawBarChart('c5',['Jan','Fev','Mar'],[
+    {data:[50000,20000,60000],color:C.META},
+    {data:[51861,32256,null],colors:(v,i)=>[51861,32256][i]>=[50000,20000][i]?C.GR:C.RD}
+  ],fmtK,hSm);
+
+  // c6 ebitda PC
+  drawBarChart('c6',['Jan','Fev','Mar'],[
+    {data:[10000,5000,15000],color:C.META},
+    {data:[10351,-2742,null],colors:(v,i)=>[10351,-2742][i]>=[10000,5000][i]?C.GR:C.RD}
+  ],fmtK,hSm);
+
+  // c7 historico
+  drawLineChart('c7',['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],[
+    {data:[974652,905216,1036989,959991,1008119,930056,1084202,1257771,1108006,1293254,1346179,1400808],color:C.MU,width:2,dash:[5,3],dotR:2.5},
+    {data:[1392083,1269862,null,null,null,null,null,null,null,null,null,null],color:C.BL,width:3,dotR:5}
+  ],fmtK,220);
+}
+
+function setTab(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  btn.classList.add('on');
+  setTimeout(drawAll,30);
+}
+
+window.addEventListener('load', drawAll);
+let resizeT;
+window.addEventListener('resize',()=>{clearTimeout(resizeT);resizeT=setTimeout(drawAll,120);});
 </script>
 </body>
 </html>
